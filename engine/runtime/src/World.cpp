@@ -10,10 +10,7 @@ entt::entity World::createEntity(std::string name) {
 std::size_t World::entityCount() const {
     std::size_t count = 0;
     const auto view = registry_.view<const NameComponent>();
-    for (const auto entity : view) {
-        (void)entity;
-        ++count;
-    }
+    for (const auto entity : view) { (void)entity; ++count; }
     return count;
 }
 }

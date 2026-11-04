@@ -1,17 +1,20 @@
-# Asset pipeline
+# Project and asset pipeline
 
-Projects use a manifest and relative resource paths. Android content is packaged below app/src/main/assets/game/. The manifest startScene is relative to the game folder.
+AETHER projects are separate directories. The Android app copies new projects into its private workspace and imports ZIP projects through the Android document picker. A valid project has project.json at its root and a startScene path relative to that root.
 
-Suggested project layout:
+Recommended layout:
+
 - project.json
 - scenes/
+- models/
 - textures/
 - materials/
-- models/
 - audio/
 - fonts/
-- extensions/
+- extensions/scripts/
+- extensions/exe/
+- extensions/shaders/
 
-The runtime reads bytes through one platform-neutral AssetStore. Android uses AAssetManager; a desktop editor will resolve the same project-relative paths from a folder. The APK should contain cooked/runtime-ready resources. Expensive import and conversion should happen in the desktop editor/build pipeline.
+The current renderer reads scene geometry descriptions from JSON and supports built-in cube, sphere and plane primitives. glTF/GLB, texture/material loading and shader-pack hot reload are planned but are not part of the current runtime yet.
 
-Integration points are staged for stb_image, fastgltf, meshoptimizer and bgfx/bimg.
+The extensions/exe folder contains compiled Android native modules (.so), not Windows executable files. Modules must be built for the matching NDK ABI and explicitly listed in project.json.

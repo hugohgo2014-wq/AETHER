@@ -14,6 +14,7 @@ struct DirectionalLightComponent { float color[3] {1.0f, 0.96f, 0.88f}; float in
 class World final {
 public:
     entt::entity createEntity(std::string name);
+    void clear() { registry_.clear(); }
     entt::registry &registry() noexcept { return registry_; }
     const entt::registry &registry() const noexcept { return registry_; }
     std::size_t entityCount() const;

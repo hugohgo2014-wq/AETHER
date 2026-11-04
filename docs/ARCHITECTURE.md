@@ -1,11 +1,21 @@
 # Architecture
 
-The C17 core is independent from C++ and Android UI. It owns logging, a monotonic clock facade, memory helpers and the versioned extension registry. C++ systems consume that API.
+AETHER is split into a platform-independent C17 core, a C++20 runtime, an Android host and a native renderer.
 
-The C++20 runtime owns ECS/world state (EnTT), project and scene parsing (nlohmann/json), scripting (Lua), audio (miniaudio), image decoding (stb) and the rendering interface.
+The C17 core owns logging, a monotonic clock facade, memory helpers and a versioned plugin ABI. The C++ runtime owns the EnTT world, JSON project/scene loading, Lua startup scripts, audio and the platform-neutral asset store.
 
-On Android, Java hosts a GLSurfaceView/EGL context. JNI passes the Java AssetManager to the native runtime. AssetStore reads packaged bytes using AAssetManager_open; no WebView, HTML or project extraction is involved. The demo project is under app/src/main/assets/game/.
+## Android lifecycle
 
-The first render path is OpenGL ES 3.0 and includes a procedurally generated sphere, animated star field, directional lighting, a specular term, atmospheric rim and tone mapping. bgfx is pinned as an optional renderer backend for a future multi-API render graph.
+Java creates a GLSurfaceView and EGL context. JNI passes the Android AssetManager and the active project directory into the runtime. On first launch the starter project is copied from APK assets into the app-private AetherProjects workspace. User-created and imported projects are loaded from writable project directories, so they do not need a new APK build.
 
-Next architecture layers: stable entity IDs, transform hierarchy, fixed-step simulation, resource handles, async streaming, PBR materials, shadow maps, post-processing, instancing/LOD, job scheduling, world partitioning, navigation, animation and editor tooling.
+The renderer consumes the active ProjectSettings scene list. It no longer draws a fixed planet. Scene entities currently map to cube, sphere and plane geometry with translation, Euler rotation, scale and flat material color. OpenGL ES 3.0 owns shader compilation, mesh buffers and draw submission.
+
+## Projects and extensions
+
+project.json points to a scene and lists project-local Lua scripts and native libraries. Native Android modules are ELF .so files built for the device ABI and loaded from extensions/exe with dlopen. The public C ABI passes only versioned C structs and host callbacks across the extension boundary. Never pass C++ objects or exceptions across this boundary.
+
+Debug builds expose runtime counters and log export. Release builds omit the debug UI and debug-only rendering path.
+
+## Next systems
+
+Resource handles, glTF/GLB import, texture/material pipeline, transform hierarchy, a proper camera controller, physics adapters, fixed-step simulation, job scheduling, culling/LOD, PBR, shadows, post-processing, animation, navigation and a full hierarchy/inspector editor remain separate milestones.

@@ -1,18 +1,18 @@
 # Roadmap and scope
 
-## Milestone 0 — native foundation (current)
-C17 core, plugin ABI/registry, C++20 runtime, EnTT world, JSON project loader, direct APK asset access, Lua boot script, miniaudio, GLES3 procedural showcase, Android APK workflow and C-core smoke tests.
+## Milestone 0.2 — native reusable project runtime (current target)
+Project workspace in the APK, create/reopen/import ZIP, project-relative disk asset loading, JSON scene primitives, saved primitive additions, generic GLES3 renderer, Lua script loading, Android dlopen native extensions, Debug/Release APK separation, debug counters and log export.
 
-## Milestone 1 — production content pipeline
-Texture resources/mipmaps; glTF and GLB import through fastgltf; mesh cache/vertex optimization with meshoptimizer; material serialization, shader variants and async resource handles.
+## Milestone 0.3 — editor fundamentals
+Touch camera orbit/pan/zoom, scene hierarchy, object selection, transform inspector, undo/redo, material editing, scene serialization UI and project asset browser.
 
-## Milestone 2 — physics and gameplay systems
-Box2D and Jolt adapters; fixed-step simulation; transform hierarchy; collision events; navigation through Recast/Detour; animation runtime.
+## Milestone 0.4 — content pipeline
+glTF/GLB mesh import, texture decode/upload, material resources, shader variants, async resource handles and mesh optimization.
 
-## Milestone 3 — desktop editor
-Dockable viewport, scene hierarchy, inspector, asset browser, console, play/pause/step toolbar, gizmos through ImGuizmo, graph editor through imgui-node-editor, undo/redo and project serialization.
+## Milestone 0.5 — gameplay systems
+Fixed-step simulation, transform hierarchy, collision/physics adapters, animation, navigation, input mapping and Lua/C++ gameplay bindings.
 
-## Milestone 4 — high-end renderer and large worlds
-bgfx integration; PBR/IBL; shadow maps and cascades; HDR, bloom, color grading, SSAO and temporal AA; GPU instancing; culling and LOD; world partitioning, async streaming, job graph and Tracy profiling.
+## Milestone 0.6 — high-end renderer and large worlds
+PBR/IBL, shadow maps/cascades, HDR, bloom, color grading, SSAO, temporal anti-aliasing, GPU instancing, culling/LOD, world partitioning, streaming, job scheduling and Tracy profiling.
 
-Unreal/Unity/Godot parity is a multi-year engineering project. The first APK is a native vertical slice, not feature parity.
+Unreal/Unity/Godot parity is a long-term engineering goal, not a claim about the current APK. Each milestone needs implementation, device testing and profiling before it should be described as complete.

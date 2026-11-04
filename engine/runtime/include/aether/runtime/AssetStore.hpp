@@ -7,6 +7,8 @@ namespace aether {
 class AssetStore final {
 public:
     static void mountAndroid(void *java_asset_manager);
+    static void setProjectRoot(std::string root);
+    static const std::string &projectRoot();
     static std::vector<std::uint8_t> readBinary(std::string_view path);
     static std::string readText(std::string_view path);
 };
