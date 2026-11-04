@@ -1,73 +1,60 @@
-# AETHER Engine
+# AETHER Runtime
 
-**A native Android-first 3D game-engine foundation. C17 core + C++20 runtime + OpenGL ES 3.0.**
+**Native Android game player — C17 core, C++20 runtime, JNI and OpenGL ES 3.0.**
 
-AETHER is intended to be a reusable engine for multiple game projects, not a single hard-coded demo. The Android APK contains the editor/runtime host; each game is a separate project folder with its own scene files, scripts, assets and extensions. It does not use WebView, HTML or a browser renderer.
+AETHER's APK is a runtime/player. It automatically launches the game packaged in \`app/src/main/assets/game/\`. It is not an editor: there are no in-app project creation, scene editing, object placement, ZIP import or asset-browser screens. It does not use WebView or HTML.
 
-## What works in this build
+## What runs
 
-- Create a new project in the APK, reopen saved projects, or import a project ZIP.
-- Native project loading from a writable app workspace (not just assets baked into the APK).
-- JSON scene loading with cube, sphere and plane primitives, per-object transforms and colors.
-- Add cube/sphere objects from the APK UI; the scene is saved back to the active project.
-- C17 core and C plugin ABI; C++20 runtime with EnTT ECS.
-- Lua project startup scripts.
-- Runtime native extension loading from `extensions/exe/*.so` through `dlopen`.
-- Native OpenGL ES 3.0 renderer. The old fixed procedural-planet showcase has been removed.
-- Separate Debug and Release APKs. Debug adds FPS/object/draw-call/plugin counters and log export; Release omits those tools.
-- JDK 17, Android SDK 35, NDK 27.2.12479018 and CMake 3.22.1.
+- Packaged game project loaded from \`assets/game/project.json\`.
+- JSON scene loading with cube, sphere and plane primitives, transforms and colors.
+- C17 core, C++20 runtime and EnTT ECS.
+- Lua startup scripts.
+- Project-listed Android native extensions loaded from \`extensions/exe/*.so\` through \`dlopen\`.
+- Native OpenGL ES 3.0 renderer.
+- Separate Debug and Release APKs. Debug has FPS/object/draw-call/plugin counters, grid diagnostic toggle and log export. Release launches fullscreen without engine UI.
 
-## Project format
+## Put a game in the APK
 
-Each project ZIP must contain `project.json` at its root (or one directory below it). The manifest points to a scene relative to the project directory:
+Replace the contents of \`app/src/main/assets/game/\` with the game project before building:
 
-```json
-{
-  "format": "aether.project",
-  "version": 1,
-  "name": "My Game",
-  "startScene": "scenes/main.scene.json",
-  "extensions": {
-    "scripts": ["extensions/scripts/boot.lua"],
-    "nativeLibraries": ["extensions/exe/libgameplay.so"]
-  }
-}
-```
+\`\`\`text
+app/src/main/assets/game/
+  project.json
+  scenes/main.scene.json
+  models/
+  textures/
+  materials/
+  audio/
+  fonts/
+  extensions/
+    scripts/
+    exe/
+\`\`\`
 
-Scene entities accept `mesh` values `cube`, `sphere` or `plane`, plus `transform.position`, `transform.rotation`, `transform.scale` and `material.color`. Project files live in the application's private storage and remain separate from the engine APK.
+The \`startScene\` path in \`project.json\` is relative to \`assets/game/\`. The app stages this directory into its private runtime folder and refreshes it when the APK version changes. To ship a different game, replace the assets and build a new APK.
+
+The currently implemented scene renderer supports cube, sphere and plane primitives with position, rotation, scale and flat color. glTF/GLB import, texture/material loading and advanced rendering are not implemented yet; placing files in those folders alone does not make them render.
 
 ## Modpack-style extensions
 
-An extension pack is project-local. Lua scripts and compiled native modules are listed by relative path in `project.json`. Put Android native modules in `extensions/exe/`. A native module must be compiled with the Android NDK for the matching ABI (`arm64-v8a` or `armeabi-v7a`) and export `aether_plugin_query(uint32_t)`.
+Lua scripts are listed in \`extensions.scripts\`. Compiled native modules are listed in \`extensions.nativeLibraries\` and placed in \`extensions/exe/\`.
 
-Android does not load Windows `.exe` programs. The `exe` folder name is the extension slot requested for compiled native modules; on Android the actual executable format is an ABI-matched ELF shared library with the `.so` suffix. Only load extensions you trust: native code runs with the app's permissions.
+Android does not execute Windows \`.exe\` files. Native extensions must be ELF shared libraries (\`.so\`) built with the Android NDK for the matching ABI (\`arm64-v8a\` or \`armeabi-v7a\`) and export \`aether_plugin_query(uint32_t)\`. Only load trusted native modules because they run with the app's permissions.
 
 ## Build
 
-Clone with submodules:
-
-```sh
+\`\`\`sh
 git clone --recurse-submodules https://github.com/hugohgo2014-wq/AETHER.git
 gradle :app:assembleDebug
 gradle :app:assembleRelease
-```
+\`\`\`
 
-Debug APK: `app/build/outputs/apk/debug/app-debug.apk`  
-Release APK: `app/build/outputs/apk/release/app-release.apk`
+Debug: \`app/build/outputs/apk/debug/app-debug.apk\`  
+Release: \`app/build/outputs/apk/release/app-release.apk\`
 
-GitHub Actions publishes separate `AETHER-Android-Debug` and `AETHER-Android-Release` artifacts.
-
-## Architecture
-
-- `engine/core`: C17 logging, time, memory facade and plugin ABI/registry.
-- `engine/runtime`: C++20 project/scene loader, EnTT world, Lua, audio and asset access.
-- `engine/renderer`: generic GLES3 primitive scene renderer.
-- `extensions/exe`: native sample module source and NDK extension contract.
-- `app`: Android editor/runtime shell, project manager and JNI bridge.
-- `external`: pinned upstream open-source dependencies.
+GitHub Actions publishes \`AETHER-Android-Debug\` and \`AETHER-Android-Release\` artifacts.
 
 ## Honest scope
 
-This is a working native engine foundation, not Unreal Engine feature parity. This build has a project workspace, primitive scene editing, scripts, native extension loading and a GLES3 runtime. glTF model importing, full inspector/transform gizmos, visual scripting, advanced PBR/shadows, physics adapters, animation, navigation, streaming and large-world tooling still need implementation. The APK should not be padded with unused libraries just to reach a 60 MB file size; engine capability matters more than artificial APK size.
-
-Original AETHER code: MIT. Third-party modules retain their upstream licenses; see `docs/THIRD_PARTY.md`.
+This is a native runtime foundation, not Unreal Engine feature parity. It currently runs packaged scenes using supported primitives, Lua startup scripts and compatible native extensions. glTF/GLB, textures/materials, full gameplay input, physics integration, animation, PBR/shadows, streaming and large-world systems remain future work.

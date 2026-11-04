@@ -1,21 +1,21 @@
-# Architecture
+# Runtime architecture
 
-AETHER is split into a platform-independent C17 core, a C++20 runtime, an Android host and a native renderer.
-
-The C17 core owns logging, a monotonic clock facade, memory helpers and a versioned plugin ABI. The C++ runtime owns the EnTT world, JSON project/scene loading, Lua startup scripts, audio and the platform-neutral asset store.
+AETHER's Android APK is a game player, not an editor. It automatically launches the game packaged in \`app/src/main/assets/game/\`. There are no in-app project creation, import, scene-editing or object-placement controls.
 
 ## Android lifecycle
 
-Java creates a GLSurfaceView and EGL context. JNI passes the Android AssetManager and the active project directory into the runtime. On first launch the starter project is copied from APK assets into the app-private AetherProjects workspace. User-created and imported projects are loaded from writable project directories, so they do not need a new APK build.
+Java creates a fullscreen GLSurfaceView and EGL context. On startup it stages the packaged \`assets/game\` tree into app-private runtime storage. A version marker refreshes that copy after APK updates. JNI passes Android AssetManager and the active game root to the runtime.
 
-The renderer consumes the active ProjectSettings scene list. It no longer draws a fixed planet. Scene entities currently map to cube, sphere and plane geometry with translation, Euler rotation, scale and flat material color. OpenGL ES 3.0 owns shader compilation, mesh buffers and draw submission.
+The runtime loads \`project.json\`, the selected start scene, Lua startup scripts and project-listed native extensions. The renderer consumes the resulting ProjectSettings and draws supported scene objects using OpenGL ES 3.0.
 
-## Projects and extensions
+## Debug and Release
 
-project.json points to a scene and lists project-local Lua scripts and native libraries. Native Android modules are ELF .so files built for the device ABI and loaded from extensions/exe with dlopen. The public C ABI passes only versioned C structs and host callbacks across the extension boundary. Never pass C++ objects or exceptions across this boundary.
+Release is a clean fullscreen player with no engine overlay. Debug includes FPS/object/draw-call/native-plugin counters, a grid diagnostic toggle and logcat export. Debug controls are compiled out of Release.
 
-Debug builds expose runtime counters and log export. Release builds omit the debug UI and debug-only rendering path.
+## Extensions
 
-## Next systems
+Native Android modules are ELF shared libraries (.so) built for the target ABI and loaded from \`extensions/exe\` through dlopen. The public C ABI uses versioned C structs and host callbacks; C++ objects and exceptions must not cross this boundary.
 
-Resource handles, glTF/GLB import, texture/material pipeline, transform hierarchy, a proper camera controller, physics adapters, fixed-step simulation, job scheduling, culling/LOD, PBR, shadows, post-processing, animation, navigation and a full hierarchy/inspector editor remain separate milestones.
+## Current renderer scope
+
+The current renderer supports built-in cube, sphere and plane geometry with transforms and flat material colors. glTF/GLB loading, texture/material resources, full input/gameplay bindings, physics adapters, animation, PBR, shadows, post-processing and large-world streaming remain future work.
