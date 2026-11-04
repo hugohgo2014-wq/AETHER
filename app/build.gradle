@@ -2,6 +2,7 @@ plugins { id "com.android.application" }
 android {
     namespace "com.aether.engine"
     compileSdk 35
+    ndkVersion "27.2.12479018"
     defaultConfig {
         applicationId "com.aether.engine"
         minSdk 24
