@@ -4,7 +4,7 @@ Every game project can carry its own extension set. This is intended to work lik
 
 ## Project manifest
 
-\`\`\`json
+```json
 {
   "extensions": {
     "scripts": ["extensions/scripts/boot.lua"],
@@ -14,7 +14,7 @@ Every game project can carry its own extension set. This is intended to work lik
     ]
   }
 }
-\`\`\`
+```
 
 Lua scripts are loaded by the project's Lua runtime. Native libraries must export aether_plugin_query(uint32_t host_abi_version) and return an AetherPluginDescriptor for AETHER_PLUGIN_ABI_VERSION. The descriptor provides an id, display name, version, and load/update/unload callbacks. The host API exposes logging and engine-owned allocation.
 
