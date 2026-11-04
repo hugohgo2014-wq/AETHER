@@ -1,0 +1,4 @@
+add_library(aether_core STATIC src/aether_core.c src/aether_plugin.c)
+target_include_directories(aether_core PUBLIC include)
+target_compile_features(aether_core PUBLIC c_std_17)
+set_target_properties(aether_core PROPERTIES POSITION_INDEPENDENT_CODE ON)

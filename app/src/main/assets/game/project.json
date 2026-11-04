@@ -1,0 +1,17 @@
+{
+  "format": "aether.project",
+  "version": 1,
+  "name": "AETHER Procedural Showcase",
+  "startScene": "scenes/planet.scene.json",
+  "renderer": {
+    "backend": "opengles3",
+    "quality": "high",
+    "proceduralMaterials": true,
+    "atmosphere": true,
+    "starField": true
+  },
+  "extensions": {
+    "scripts": ["extensions/boot.lua"],
+    "native": ["aether.sample"]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "format": "aether.scene",
+  "version": 1,
+  "entities": [
+    {"name": "Procedural Planet", "components": ["Transform", "MeshRenderer", "Atmosphere"]},
+    {"name": "Key Light", "components": ["DirectionalLight"]},
+    {"name": "Showcase Camera", "components": ["Camera"]}
+  ]
+}
