@@ -44,7 +44,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_aether_engine_MainActivity_nativeAddP
 }
 extern "C" JNIEXPORT jstring JNICALL Java_com_aether_engine_MainActivity_nativeGetStats(JNIEnv *env,jobject){
     char buffer[256];
-    const auto &runtime=aether::EngineRuntime::instance();
+    auto &runtime=aether::EngineRuntime::instance();
     std::snprintf(buffer,sizeof(buffer),"FPS %.1f   |   Objetos %zu   |   Draw calls %d   |   Plugins %zu",
         fps_value,runtime.world().entityCount(),aether::GlesRenderer::instance().drawCalls(),runtime.extensionCount());
     return env->NewStringUTF(buffer);
