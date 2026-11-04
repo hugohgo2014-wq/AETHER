@@ -1,0 +1,18 @@
+name: AETHER Core CI
+on:
+  push: { branches: [main] }
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  c-core:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON
+      - name: Build C17 core
+        run: cmake --build build --parallel 2
+      - name: Run core tests
+        run: ctest --test-dir build --output-on-failure
